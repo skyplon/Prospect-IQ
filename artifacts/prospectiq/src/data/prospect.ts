@@ -1,6 +1,8 @@
 export interface SignalItem {
   text: string;
   source: string;
+  confidence: number;
+  freshness: string;
 }
 
 export interface IntelligenceCard {
@@ -8,6 +10,9 @@ export interface IntelligenceCard {
   icon: string;
   borderColor: string;
   bgColor: string;
+  headerTextColor: string;
+  dataSource: string;
+  lastRefreshed: string;
   signals: SignalItem[];
 }
 
@@ -16,19 +21,85 @@ export interface EmailSection {
   content: string;
 }
 
+export interface ConversionStats {
+  replyRate: number;
+  meetingRate: number;
+  bestFor: string;
+  sampleSize: number;
+  aiWeight: number;
+  trend: "up" | "down" | "flat";
+}
+
 export interface EmailVariant {
   id: string;
   tab: string;
   icon: string;
   subject: string;
   sections: EmailSection[];
+  conversionStats: ConversionStats;
 }
 
 export interface RecentProspect {
   name: string;
   company: string;
   title: string;
+  outcome?: "replied" | "meeting" | "no_response";
+  sentDate?: string;
 }
+
+export interface DataSource {
+  id: string;
+  name: string;
+  shortName: string;
+  status: "live" | "syncing" | "degraded";
+  latency: string;
+  recordsFetched: number;
+  icon: string;
+  color: string;
+}
+
+export const DATA_SOURCES: DataSource[] = [
+  {
+    id: "linkedin",
+    name: "LinkedIn Sales Navigator",
+    shortName: "LinkedIn SN",
+    status: "live",
+    latency: "82ms",
+    recordsFetched: 1247,
+    icon: "in",
+    color: "#0077B5",
+  },
+  {
+    id: "financial",
+    name: "S&P Capital IQ",
+    shortName: "Capital IQ",
+    status: "live",
+    latency: "134ms",
+    recordsFetched: 318,
+    icon: "fi",
+    color: "#1E6FBA",
+  },
+  {
+    id: "techstack",
+    name: "BuiltWith Intelligence",
+    shortName: "BuiltWith",
+    status: "live",
+    latency: "61ms",
+    recordsFetched: 892,
+    icon: "bw",
+    color: "#7C3AED",
+  },
+  {
+    id: "news",
+    name: "Factiva News Feed",
+    shortName: "Factiva",
+    status: "syncing",
+    latency: "—",
+    recordsFetched: 0,
+    icon: "nw",
+    color: "#0F6B75",
+  },
+];
 
 export const PROSPECT_DATA = {
   name: "Jennifer Walsh",
@@ -43,22 +114,32 @@ export const PROSPECT_DATA = {
       borderColor: "border-blue-500",
       bgColor: "bg-blue-50",
       headerTextColor: "text-blue-700",
+      dataSource: "S&P Capital IQ",
+      lastRefreshed: "2 min ago",
       signals: [
         {
           text: "Q3 earnings: Digital marketing spend up 34% YoY — CEO cited 'customer experience transformation' as top priority",
           source: "Q3 Earnings Call",
+          confidence: 97,
+          freshness: "3h ago",
         },
         {
           text: "Headcount growth: 120 marketing hires in last 6 months — signals active buildout of digital capabilities",
           source: "LinkedIn",
+          confidence: 94,
+          freshness: "1h ago",
         },
         {
           text: "Recently acquired Peakon for $700M — integrating employee experience data into customer journey",
           source: "Press Release",
+          confidence: 99,
+          freshness: "14d ago",
         },
         {
           text: "CFO flagged 'marketing technology consolidation' as a 2024 cost initiative",
           source: "Investor Day",
+          confidence: 96,
+          freshness: "6d ago",
         },
       ],
     },
@@ -68,22 +149,32 @@ export const PROSPECT_DATA = {
       borderColor: "border-teal-500",
       bgColor: "bg-teal-50",
       headerTextColor: "text-teal-700",
+      dataSource: "LinkedIn Sales Navigator",
+      lastRefreshed: "4 min ago",
       signals: [
         {
           text: "Posted 3 days ago: 'Struggling to connect our campaign data across 6 different tools — anyone solved this at scale?'",
           source: "LinkedIn Post",
+          confidence: 99,
+          freshness: "3d ago",
         },
         {
           text: "Engaged with 2 articles on Customer Data Platforms in last 30 days",
           source: "LinkedIn Activity",
+          confidence: 91,
+          freshness: "11d ago",
         },
         {
           text: "Promoted to VP role 8 months ago — likely evaluating inherited tech stack",
           source: "LinkedIn Profile",
+          confidence: 99,
+          freshness: "8mo ago",
         },
         {
           text: "Mutual connection: Sarah Chen, Adobe Enterprise Sales",
           source: "LinkedIn Network",
+          confidence: 99,
+          freshness: "Live",
         },
       ],
     },
@@ -93,22 +184,32 @@ export const PROSPECT_DATA = {
       borderColor: "border-purple-500",
       bgColor: "bg-purple-50",
       headerTextColor: "text-purple-700",
+      dataSource: "BuiltWith Intelligence",
+      lastRefreshed: "7 min ago",
       signals: [
         {
           text: "Current stack: Marketo, Salesforce, Google Analytics, Sprinklr, Tableau",
           source: "BuiltWith",
+          confidence: 95,
+          freshness: "2d ago",
         },
         {
           text: "No CDP layer identified — significant gap for unified customer profile use case",
           source: "Tech Analysis",
+          confidence: 88,
+          freshness: "2d ago",
         },
         {
           text: "Marketo contract likely up for renewal Q1 2025 based on typical 2-year cycle",
           source: "Contract Intelligence",
+          confidence: 82,
+          freshness: "Estimated",
         },
         {
           text: "Adobe Experience Platform directly displaces 3 tools in current stack",
           source: "Competitive Analysis",
+          confidence: 93,
+          freshness: "Live",
         },
       ],
     },
@@ -123,6 +224,14 @@ export const PROSPECT_DATA = {
       tab: "Financial Angle",
       icon: "📊",
       subject: "Workday's Q3 commitment to CX — what this means for your stack",
+      conversionStats: {
+        replyRate: 28,
+        meetingRate: 11,
+        bestFor: "CFO-aligned VPs at post-earnings accounts",
+        sampleSize: 143,
+        aiWeight: 72,
+        trend: "up",
+      },
       sections: [
         {
           label: "Hook",
@@ -146,6 +255,14 @@ export const PROSPECT_DATA = {
       tab: "LinkedIn Angle",
       icon: "👤",
       subject: "Jennifer — solving the 6-tool fragmentation problem at Workday",
+      conversionStats: {
+        replyRate: 41,
+        meetingRate: 18,
+        bestFor: "Recently promoted VPs who've posted about pain points",
+        sampleSize: 89,
+        aiWeight: 91,
+        trend: "up",
+      },
       sections: [
         {
           label: "Hook",
@@ -169,6 +286,14 @@ export const PROSPECT_DATA = {
       tab: "Tech Angle",
       icon: "🔧",
       subject: "Your Marketo renewal window — and what comes next",
+      conversionStats: {
+        replyRate: 22,
+        meetingRate: 9,
+        bestFor: "Ops-minded buyers evaluating stack consolidation",
+        sampleSize: 201,
+        aiWeight: 58,
+        trend: "flat",
+      },
       sections: [
         {
           label: "Hook",
@@ -190,10 +315,10 @@ export const PROSPECT_DATA = {
   ] as EmailVariant[],
 
   recentProspects: [
-    { name: "Marcus Chen", company: "Salesforce", title: "VP Ops" },
-    { name: "Diana Park", company: "ServiceNow", title: "CMO" },
-    { name: "Tom Walsh", company: "SAP", title: "Dir. Marketing" },
-    { name: "Priya Sharma", company: "Oracle", title: "VP Digital" },
+    { name: "Marcus Chen", company: "Salesforce", title: "VP Ops", outcome: "meeting", sentDate: "Apr 17" },
+    { name: "Diana Park", company: "ServiceNow", title: "CMO", outcome: "replied", sentDate: "Apr 15" },
+    { name: "Tom Walsh", company: "SAP", title: "Dir. Marketing", outcome: "no_response", sentDate: "Apr 12" },
+    { name: "Priya Sharma", company: "Oracle", title: "VP Digital", outcome: "replied", sentDate: "Apr 10" },
   ] as RecentProspect[],
 };
 
@@ -212,3 +337,18 @@ export const COMPLIANCE_RULES = [
   "Approved product naming only",
   "No competitor disparagement",
 ];
+
+export const LEARNING_STATS = {
+  totalEmailsSent: 1847,
+  totalReplies: 612,
+  totalMeetings: 203,
+  overallReplyRate: 33,
+  overallMeetingRate: 11,
+  modelVersion: "v4.2",
+  lastTrained: "Apr 18, 2026",
+  topSignalCombinations: [
+    { signals: "Recent LinkedIn post + VP role change < 12mo", liftPct: 68, sampleSize: 47 },
+    { signals: "Earnings mention + CFO cost initiative", liftPct: 44, sampleSize: 92 },
+    { signals: "Stack gap identified + renewal < 6mo", liftPct: 51, sampleSize: 63 },
+  ],
+};

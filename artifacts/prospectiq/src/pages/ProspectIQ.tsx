@@ -1,8 +1,17 @@
-import { useState } from "react";
-import { RefreshCw, Copy, ExternalLink, BookmarkPlus, ChevronDown, ChevronUp, Check } from "lucide-react";
+import { useState, useCallback } from "react";
+import { RefreshCw, Copy, ExternalLink, BookmarkPlus, Check, TrendingUp } from "lucide-react";
 import { IntelligenceCard } from "@/components/IntelligenceCard";
 import { EmailSection } from "@/components/EmailSection";
+import { DataSourcesBar } from "@/components/DataSourcesBar";
+import { ConversionPanel } from "@/components/ConversionPanel";
 import { PROSPECT_DATA, OUTREACH_GOALS, COMPLIANCE_RULES } from "@/data/prospect";
+import type { RecentProspect } from "@/data/prospect";
+
+function outcomeLabel(outcome: RecentProspect["outcome"]) {
+  if (outcome === "meeting") return { label: "Meeting", cls: "bg-green-100 text-green-700 border-green-200" };
+  if (outcome === "replied") return { label: "Replied", cls: "bg-blue-100 text-blue-700 border-blue-200" };
+  return { label: "Sent", cls: "bg-gray-100 text-gray-500 border-gray-200" };
+}
 
 export default function ProspectIQ() {
   const [activeVariant, setActiveVariant] = useState("linkedin");
@@ -10,6 +19,7 @@ export default function ProspectIQ() {
   const [length, setLength] = useState("medium");
   const [complianceOpen, setComplianceOpen] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [feedbackMap, setFeedbackMap] = useState<Record<string, string | null>>({});
   const [form, setForm] = useState({
     name: PROSPECT_DATA.name,
     company: PROSPECT_DATA.company,
@@ -32,27 +42,41 @@ export default function ProspectIQ() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleFeedback = useCallback((type: "replied" | "meeting" | "no_response") => {
+    setFeedbackMap((prev) => ({ ...prev, [activeVariant]: type }));
+  }, [activeVariant]);
+
   return (
     <div className="flex flex-col h-screen bg-[#f5f6f8] overflow-hidden">
       {/* Top Bar */}
-      <header className="bg-white border-b border-border px-5 py-3 flex items-center justify-between flex-shrink-0 shadow-xs">
+      <header className="bg-white border-b border-border px-5 py-2.5 flex items-center justify-between flex-shrink-0 shadow-xs">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-md bg-[#E02020] flex items-center justify-center">
               <span className="text-white text-xs font-bold">P</span>
             </div>
             <span className="font-semibold text-gray-900 text-sm">ProspectIQ</span>
+            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#E02020]/10 text-[#E02020] border border-[#E02020]/20">v2</span>
           </div>
           <span className="text-gray-300">|</span>
           <span className="text-xs text-gray-500 font-medium">AI Sales Intelligence & Outreach Generator</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 text-[10px] text-gray-500">
+            <TrendingUp size={11} className="text-green-500" />
+            <span className="font-semibold text-green-600">33%</span>
+            <span>global reply rate</span>
+          </div>
+          <span className="text-gray-300">|</span>
           <span className="text-xs text-gray-400">Adobe Enterprise Sales</span>
           <div className="w-7 h-7 rounded-full bg-[#E02020] flex items-center justify-center">
             <span className="text-white text-[10px] font-bold">SD</span>
           </div>
         </div>
       </header>
+
+      {/* Live Data Sources Bar */}
+      <DataSourcesBar />
 
       {/* Three Panel Layout */}
       <div className="flex flex-1 overflow-hidden">
@@ -109,7 +133,7 @@ export default function ProspectIQ() {
           </div>
 
           {/* Intelligence Stream Cards */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 overflow-y-auto p-3 space-y-3">
             {PROSPECT_DATA.intelligenceCards.map((card) => (
               <IntelligenceCard
                 key={card.title}
@@ -118,19 +142,21 @@ export default function ProspectIQ() {
                 borderColor={card.borderColor}
                 bgColor={card.bgColor}
                 headerTextColor={card.headerTextColor}
+                dataSource={card.dataSource}
+                lastRefreshed={card.lastRefreshed}
                 signals={card.signals}
               />
             ))}
 
             {/* Synthesized Intelligence Summary */}
-            <div className="bg-gray-50 border border-border rounded-lg p-4">
+            <div className="bg-gray-50 border border-border rounded-lg p-3.5">
               <div className="flex items-center gap-1.5 mb-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#0F6B75]" />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
                   Synthesized Intelligence
                 </span>
               </div>
-              <p className="text-xs text-gray-600 leading-relaxed italic">
+              <p className="text-[11px] text-gray-600 leading-relaxed italic">
                 {PROSPECT_DATA.summary}
               </p>
             </div>
@@ -142,23 +168,35 @@ export default function ProspectIQ() {
           {/* Variant Tabs */}
           <div className="bg-white border-b border-border flex-shrink-0 px-4 pt-3 flex items-end justify-between">
             <div className="flex gap-0.5">
-              {PROSPECT_DATA.emailVariants.map((v) => (
-                <button
-                  key={v.id}
-                  onClick={() => setActiveVariant(v.id)}
-                  className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-md border-b-2 transition-colors ${
-                    activeVariant === v.id
-                      ? "border-[#E02020] text-[#E02020] bg-red-50/50"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  <span>{v.icon}</span>
-                  <span>{v.tab}</span>
-                  {activeVariant === v.id && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#E02020]" />
-                  )}
-                </button>
-              ))}
+              {PROSPECT_DATA.emailVariants.map((v) => {
+                const isActive = activeVariant === v.id;
+                const weightColor =
+                  v.conversionStats.aiWeight >= 85
+                    ? "text-green-600"
+                    : v.conversionStats.aiWeight >= 65
+                    ? "text-blue-600"
+                    : "text-amber-600";
+                return (
+                  <button
+                    key={v.id}
+                    onClick={() => setActiveVariant(v.id)}
+                    className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-md border-b-2 transition-colors ${
+                      isActive
+                        ? "border-[#E02020] text-[#E02020] bg-red-50/50"
+                        : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    <span>{v.icon}</span>
+                    <span>{v.tab}</span>
+                    <span className={`text-[9px] font-bold ${isActive ? "text-[#E02020]" : weightColor}`}>
+                      {v.conversionStats.replyRate}%
+                    </span>
+                    {isActive && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#E02020]" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
             <div className="pb-2">
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-50 text-green-700 border border-green-200 text-[10px] font-semibold">
@@ -199,7 +237,7 @@ export default function ProspectIQ() {
                   />
                 ))}
 
-                {/* Divider */}
+                {/* Signature */}
                 <div className="border-t border-dashed border-gray-200 pt-4">
                   <div className="bg-gray-50 rounded px-3 py-2">
                     <p className="text-[11px] text-gray-400 leading-relaxed">
@@ -210,6 +248,14 @@ export default function ProspectIQ() {
                   </div>
                 </div>
               </div>
+
+              {/* Conversion Panel */}
+              <ConversionPanel
+                variantId={activeVariant}
+                stats={currentVariant.conversionStats}
+                onFeedback={handleFeedback}
+                lastFeedback={feedbackMap[activeVariant] ?? null}
+              />
             </div>
           </div>
 
@@ -290,14 +336,14 @@ export default function ProspectIQ() {
               </div>
             </div>
 
-            {/* Brand Compliance Rules */}
+            {/* Brand Compliance */}
             <div>
               <button
                 className="w-full flex items-center justify-between text-[11px] font-semibold text-gray-600 mb-2 hover:text-gray-800 transition-colors"
                 onClick={() => setComplianceOpen(!complianceOpen)}
               >
                 <span>Active Compliance Rules</span>
-                {complianceOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                <span className="text-gray-400 text-[10px]">{complianceOpen ? "▲" : "▼"}</span>
               </button>
               {complianceOpen && (
                 <div className="space-y-1.5">
@@ -315,7 +361,7 @@ export default function ProspectIQ() {
             </div>
           </div>
 
-          {/* Regenerate Button */}
+          {/* Regenerate */}
           <div className="px-4 py-3 border-b border-border flex-shrink-0">
             <button className="w-full py-2 border-2 border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-800 text-xs font-semibold rounded-md transition-colors flex items-center justify-center gap-1.5">
               <RefreshCw size={12} />
@@ -329,28 +375,36 @@ export default function ProspectIQ() {
               Recent Prospects
             </h3>
             <div className="space-y-1">
-              {PROSPECT_DATA.recentProspects.map((prospect, i) => (
-                <button
-                  key={i}
-                  className="w-full text-left px-3 py-2.5 rounded-md hover:bg-gray-50 transition-colors group border border-transparent hover:border-border"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center flex-shrink-0">
-                      <span className="text-[10px] font-bold text-gray-600">
-                        {prospect.name.split(" ").map((n) => n[0]).join("")}
-                      </span>
+              {PROSPECT_DATA.recentProspects.map((prospect, i) => {
+                const { label, cls } = outcomeLabel(prospect.outcome);
+                return (
+                  <button
+                    key={i}
+                    className="w-full text-left px-3 py-2.5 rounded-md hover:bg-gray-50 transition-colors group border border-transparent hover:border-border"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center flex-shrink-0">
+                        <span className="text-[10px] font-bold text-gray-600">
+                          {prospect.name.split(" ").map((n) => n[0]).join("")}
+                        </span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-semibold text-gray-700 group-hover:text-gray-900 truncate">
+                            {prospect.name}
+                          </p>
+                          <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded border ${cls} flex-shrink-0 ml-1`}>
+                            {label}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-gray-400 truncate">
+                          {prospect.company} · {prospect.title}
+                        </p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-semibold text-gray-700 group-hover:text-gray-900 truncate">
-                        {prospect.name}
-                      </p>
-                      <p className="text-[10px] text-gray-400 truncate">
-                        {prospect.company} · {prospect.title}
-                      </p>
-                    </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
