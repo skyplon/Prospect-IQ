@@ -1,0 +1,167 @@
+Build a web app called "ProspectIQ — AI Sales Intelligence & 
+Outreach Generator".
+
+PRIMARY USER: Enterprise SDR at Adobe who spends 75-90 minutes per 
+prospect manually researching financial reports, LinkedIn activity, 
+and tech stack data before writing a single personalized outreach 
+email — representing 60% of their working day on research instead 
+of selling.
+
+PROBLEM: No unified intelligence layer connects multi-source prospect 
+signals to brand-compliant, personalized outreach — so SDRs do machine 
+work by hand, producing inconsistent quality at high time cost.
+
+LAYOUT: Three-panel horizontal layout, full height.
+
+LEFT PANEL (35% width) — PROSPECT INPUT + INTELLIGENCE:
+
+TOP: Prospect Input Form
+- Prospect Name (text) — pre-filled: "Jennifer Walsh"
+- Company (text) — pre-filled: "Workday"
+- Role/Title (text) — pre-filled: "VP of Digital Marketing"
+- Outreach Goal (dropdown: Intro Call / Product Demo / 
+  Executive Briefing / Event Invitation / Partnership Discussion)
+  pre-selected: "Product Demo"
+- "Generate Intelligence" button (Adobe red, full width)
+
+BELOW FORM: Three Intelligence Stream Cards (stacked vertically, 
+each with a colored left border):
+
+Card 1 — Financial Signals (blue border, 📊 icon):
+Title: "Financial Signals"
+4 bullet insights with source tags:
+- "Q3 earnings: Digital marketing spend up 34% YoY — 
+  CEO cited 'customer experience transformation' as top priority" 
+  [Source: Q3 Earnings Call]
+- "Headcount growth: 120 marketing hires in last 6 months — 
+  signals active buildout of digital capabilities" [Source: LinkedIn]
+- "Recently acquired Peakon for $700M — integrating employee 
+  experience data into customer journey" [Source: Press Release]
+- "CFO flagged 'marketing technology consolidation' as a 
+  2024 cost initiative" [Source: Investor Day]
+
+Card 2 — Behavioral Signals (teal border, 👤 icon):
+Title: "Behavioral Signals — Jennifer Walsh"
+4 bullet insights with source tags:
+- "Posted 3 days ago: 'Struggling to connect our campaign data 
+  across 6 different tools — anyone solved this at scale?'" 
+  [Source: LinkedIn Post]
+- "Engaged with 2 articles on Customer Data Platforms in 
+  last 30 days" [Source: LinkedIn Activity]
+- "Promoted to VP role 8 months ago — likely evaluating 
+  inherited tech stack" [Source: LinkedIn Profile]
+- "Mutual connection: Sarah Chen, Adobe Enterprise Sales" 
+  [Source: LinkedIn Network]
+
+Card 3 — Tech Stack Signals (purple border, 🔧 icon):
+Title: "Tech Stack Signals"
+4 bullet insights with source tags:
+- "Current stack: Marketo, Salesforce, Google Analytics, 
+  Sprinklr, Tableau" [Source: BuiltWith]
+- "No CDP layer identified — significant gap for unified 
+  customer profile use case" [Source: Tech Analysis]
+- "Marketo contract likely up for renewal Q1 2025 based 
+  on typical 2-year cycle" [Source: Contract Intelligence]
+- "Adobe Experience Platform directly displaces 3 tools 
+  in current stack" [Source: Competitive Analysis]
+
+BELOW CARDS: Synthesized Intelligence Summary
+Gray background box, italic text:
+"Jennifer Walsh is 8 months into her VP role at Workday, 
+inheriting a fragmented 6-tool marketing stack at a moment 
+when Workday's leadership has explicitly prioritized customer 
+experience transformation. Her recent LinkedIn post signals 
+active pain around campaign data unification — a direct 
+product-market fit for Adobe Experience Platform's CDP 
+capability. With Marketo renewal approaching and 3 stack 
+overlap opportunities identified, timing and fit are both 
+strong for an AEP demo conversation."
+
+RIGHT PANEL (25% width) — BRAND & CONTROLS:
+
+Title: "Generation Controls"
+
+Tone selector (radio buttons):
+○ Formal  ● Professional  ○ Conversational
+
+Length selector (radio buttons):
+○ Short (3 sentences)  ● Medium (5 sentences)  ○ Long (8 sentences)
+
+Brand Compliance Rules (collapsible section, default open):
+Title: "Active Compliance Rules"
+List 5 rules as small chips:
+✅ No unverified performance claims
+✅ Adobe brand voice guidelines
+✅ Required legal disclaimer
+✅ Approved product naming only
+✅ No competitor disparagement
+
+"Regenerate All" button (full width, outlined style)
+
+Recent Prospects section (below):
+Title: "Recent Prospects"
+List 4 previous prospects as clickable rows:
+- Marcus Chen, Salesforce, VP Ops
+- Diana Park, ServiceNow, CMO  
+- Tom Walsh, SAP, Dir. Marketing
+- Priya Sharma, Oracle, VP Digital
+
+CENTER PANEL (40% width) — EMAIL OUTPUT:
+
+TOP: Three variant tabs:
+[📊 Financial Angle] [👤 LinkedIn Angle ✓ active] [🔧 Tech Angle]
+
+Brand compliance badge top right:
+Green chip: "✅ Brand Compliant"
+
+Email preview card (white, subtle shadow):
+
+Subject line (editable, with small "Regenerate" icon):
+"Jennifer — solving the 6-tool fragmentation problem at Workday"
+
+Email body with 3 labeled sections, each with small 
+"↻ Regenerate" button top right:
+
+SECTION: Hook
+"Hi Jennifer — saw your post about connecting campaign data 
+across 6 tools. That exact challenge is what I hear from 
+every VP of Marketing I speak with at Workday's scale, 
+and it's exactly what we built Adobe Experience Platform 
+to solve."
+
+SECTION: Value Bridge  
+"With Workday's Q3 commitment to customer experience 
+transformation and your team's rapid growth (120 marketing 
+hires this year), having a unified customer profile layer 
+isn't just a nice-to-have — it becomes the foundation 
+everything else runs on. AEP gives you a single real-time 
+profile across every touchpoint, replacing 3 of the tools 
+currently in your stack."
+
+SECTION: CTA
+"Would a 30-minute demo make sense this month? I can show 
+you specifically how Workday-scale teams are using AEP to 
+unify their campaign data — and what a consolidation path 
+looks like from your current setup. Happy to work around 
+your calendar."
+
+Signature block (gray, smaller text):
+"[SDR Name] | Adobe Enterprise Sales | [phone] | [email]"
+
+BOTTOM ACTION BAR:
+"📋 Copy to Clipboard" button (primary, Adobe red)
+"🚀 Open in Salesloft" button (secondary, outlined)
+"💾 Save Prospect" button (ghost style)
+
+UI STYLE: White background, Adobe red (#E02020) for primary 
+CTAs, teal (#0F6B75) for intelligence card borders, 
+clean professional typography, subtle card shadows. 
+Enterprise SaaS. No consumer styling. No login screen.
+
+IMPORTANT: Pre-load the app in a fully completed state 
+showing Jennifer Walsh / Workday example with all panels 
+populated. The app should feel live and functional 
+immediately on load, not empty.
+
+DO NOT include: login screens, billing, email sequence 
+management, analytics dashboards, or CRM sync features.
